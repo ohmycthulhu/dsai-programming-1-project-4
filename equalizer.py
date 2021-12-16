@@ -11,24 +11,25 @@ class Equalizer:
 
     def __init__(self, window, width, height, audio, duration):
         self._canvas = tk.Canvas(window, width=width, height=height)
-        self._duration = duration
         self._stripes = self._generate_stripes(self._canvas, audio, width, height, duration)
+        self._duration = duration
+        self._time = 0
 
     def grid(self, **kwargs):
         self._canvas.grid(**kwargs)
 
     @property
-    def duration(self):
-        return self._duration
+    def time(self):
+        return self._time
 
-    @duration.setter
-    def duration(self, value):
-        self._duration = value
+    @time.setter
+    def time(self, value):
+        self._time = value
         self._update_color()
 
     def _update_color(self):
         for stripe in self._stripes:
-            stripe.color = self.ACTIVE_COLOR if stripe.timecode <= self._duration else self.INACTIVE_COLOR
+            stripe.color = self.ACTIVE_COLOR if stripe.timecode <= self._time else self.INACTIVE_COLOR
 
     @staticmethod
     def _generate_stripes(canvas, audio, width, height, duration):
@@ -36,6 +37,7 @@ class Equalizer:
         padding = width // 20
         y_pos = height / 2
         max_height = height * 9 // 10
+        min_height = height * 2 // 10
         max_value = np.max(values)
         results = []
         stripes_count = (width - 2 * padding) // (Equalizer.STRIPE_WIDTH + Equalizer.STRIPE_SEP)
@@ -43,7 +45,7 @@ class Equalizer:
 
         for i in range(stripes_count):
             ind = int(len(values) * (i / stripes_count))
-            curr_height = values[ind] * max_height / max_value
+            curr_height = max(values[ind] * max_height / max_value, min_height)
             results.append(
                 Stripe(
                     canvas=canvas,
@@ -64,7 +66,7 @@ class Stripe:
         self._canvas = canvas
         self._color = color
         self._timecode = timecode
-        self._figure = canvas.create_rectangle(x - width / 2, y - height / 2, x + width / 2, y + height / 2, fill=color)
+        self._figure = canvas.create_rectangle(x - width / 2, y - height / 2, x + width / 2, y + height / 2, fill=color, border=None)
 
     @property
     def color(self):

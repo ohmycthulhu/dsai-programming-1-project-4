@@ -19,7 +19,7 @@ window.title(config['name'])
 
 # Declare global scalars
 is_playing, is_paused = False, False
-duration, step = 0, 100
+current_time, step = 0, 100
 
 # Initialize Audio class instance
 audio = Audio(filename)
@@ -49,7 +49,7 @@ def save_comment(comment, start):
 
 
 def add_comment(comment):
-    save_comment(comment, duration)
+    save_comment(comment, current_time)
 
 
 def clear_all_comments():
@@ -60,7 +60,7 @@ def clear_all_comments():
 def play():
     global is_playing, is_paused
     is_playing, is_paused = True, False
-    audio.play(duration)
+    audio.play(current_time)
 
 
 def pause():
@@ -69,53 +69,67 @@ def pause():
     audio.stop()
 
 
+def format_time(t):
+    minutes = int(t // 60)
+    seconds = int(t) % 60
+    return f"{minutes}:{seconds if seconds >= 10 else '0' + str(seconds)}"
+
+
 # Widgets initialization
 # Equalizer for displaying the sound track
-equalizer = Equalizer(window, 300, 100, audio.track, audio.duration)
+equalizer = Equalizer(window, 600, 100, audio.track, audio.duration)
 equalizer.grid(row=1, column=1, columnspan=2)
+
+# Information about duration
+str_time = tkinter.StringVar()
+txt_time = tkinter.Label(window, textvariable=str_time)
+txt_time.grid(row=2, column=2)
 
 # Subtitles for showing the comment by time
 str_subtitle = tkinter.StringVar()
 txt_subtitle = tkinter.Label(window, textvariable=str_subtitle)
-txt_subtitle.grid(row=2, column=1, columnspan=2)
+txt_subtitle.grid(row=3, column=1, columnspan=2)
 
 
 # Comments' controls for showing input and adding new comments
-comment_controls = CommentControls(window, 3)
+comment_controls = CommentControls(window, 4)
 comment_controls.on('new_comment', add_comment)
 comment_controls.on('open', lambda: is_playing and pause())
 comment_controls.on('close', lambda: is_paused and play())
 
 
 # Audio controls for controlling the playback
-audio_controls = AudioControlButtons(window, 5)
+audio_controls = AudioControlButtons(window, 6)
 audio_controls.on('play', play)
 audio_controls.on('pause', pause)
 
 
 # Big button for clearing all comments
-tkinter.Button(window, text='Delete comments', command=clear_all_comments).grid(row=5, column=1, columnspan=2)
+tkinter.Button(window, text='Delete comments', command=clear_all_comments).grid(row=7, column=1, columnspan=2)
 
 
 # Mainloop
 def main():
-    global duration, is_playing
+    global current_time, is_playing
 
     # Synchronize comment with given time
-    comment = get_comment(duration)
+    comment = get_comment(current_time)
     if comment is not None:
         str_subtitle.set(comment)
 
     # Update equalizer widget
-    equalizer.duration = duration
+    equalizer.time = current_time
 
-    # Increase duration if audio is playing
+    # Set time
+    str_time.set(f"{format_time(current_time)} / {format_time(audio.duration)}")
+
+    # Increase current_time if audio is playing
     if is_playing:
-        duration += step / 1000
+        current_time += step / 1000
 
-        if duration > audio.duration:
+        if current_time > audio.duration:
             is_playing = False
-            duration = 0
+            current_time = 0
 
     # Plan next main run
     window.after(step, main)
