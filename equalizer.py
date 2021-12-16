@@ -2,6 +2,7 @@ import tkinter as tk
 import numpy as np
 
 
+# Widget for displaying the audio equalizer
 class Equalizer:
     ACTIVE_COLOR = 'red'
     INACTIVE_COLOR = 'blue'

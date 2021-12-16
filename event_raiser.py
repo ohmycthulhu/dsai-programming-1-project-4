@@ -1,3 +1,4 @@
+# Class for working with event listeners and emitters
 class EventRaiser:
     def __init__(self):
         self._listeners = {}
