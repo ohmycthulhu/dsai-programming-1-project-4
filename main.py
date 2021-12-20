@@ -20,7 +20,7 @@ filename = config['sound']
 
 if os.path.exists(COMMENTS_FILE):
     with open(COMMENTS_FILE) as f:
-        comments = json.load(f)
+        comments = json.load(f)['comments']
 else:
     comments = []
 comments = sorted(comments, key=lambda x: x['start'], reverse=True)
