@@ -1,17 +1,28 @@
 import tkinter
 import json
+import os
 from audio import Audio
 from equalizer import Equalizer
 from control_buttons import AudioControlButtons, CommentControls
+
+CONFIG_FILE = 'config.json'
+COMMENTS_FILE = 'comments.json'
 
 # Create window
 window = tkinter.Tk()
 
 # Read and interpret the configuration
-with open('config.json') as file:
+with open(CONFIG_FILE) as file:
     config = json.load(file)
 
-filename, comments = config['sound'], config['comments']
+filename = config['sound']
+
+
+if os.path.exists(COMMENTS_FILE):
+    with open(COMMENTS_FILE) as f:
+        comments = json.load(f)
+else:
+    comments = []
 comments = sorted(comments, key=lambda x: x['start'], reverse=True)
 
 # Set title
@@ -30,8 +41,8 @@ audio = Audio(filename)
 def update_comments(_comments):
     global comments
     comments = sorted(_comments, key=lambda x: x['start'], reverse=True)
-    with open('config.json', 'w') as f:
-        json.dump({**config, 'comments': comments}, f)
+    with open(COMMENTS_FILE, 'w') as f:
+        json.dump({'comments': comments}, f)
 
 
 # Gets the first comment within given time
