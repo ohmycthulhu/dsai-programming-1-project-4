@@ -66,6 +66,7 @@ class CommentControls(EventRaiser):
 
     def _clear_handler(self):
         self._clear()
+        self.hide()
 
     def _display_handler(self):
         self.show()
