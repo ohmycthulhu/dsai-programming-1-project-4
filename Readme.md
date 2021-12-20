@@ -5,6 +5,7 @@ This is the code for the Project 4 of Programming 1.
 
 - [How to run](#how-to-run)
 - [The structure of the project](#the-structure-of-the-project)
+- [Project files](#project-files)
 
 ## How to run
 The project contains virtual Python environment with all needed packages.
@@ -25,4 +26,10 @@ and controlled by setting the time of playback.
 
 The only other class encapsulates usage of the audio files.
 `Audio` class encapsulates `simpleaudio` usage.
+
+
+## Project files
+The project contains one or two files. There are:
+- _config.json_ - contains the information about audio for playing and the title of the program
+- _comments.json_ - this file doesn't exist by default and will be created after creating first comment.
 
