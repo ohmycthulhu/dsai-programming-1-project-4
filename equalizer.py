@@ -47,7 +47,6 @@ class Equalizer:
         for i in range(stripes_count):
             ind = int(len(values) * (i / stripes_count))
             curr_height = max(max_height * (values[ind] - mean_value) / max_value, min_height)
-            print(values[ind])
             results.append(
                 Stripe(
                     canvas=canvas,
