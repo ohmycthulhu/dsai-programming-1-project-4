@@ -36,16 +36,18 @@ class Equalizer:
         values = np.array([x for x in audio])
         padding = width // 20
         y_pos = height / 2
-        max_height = height * 9 // 10
-        min_height = height * 2 // 10
-        max_value = np.max(values)
+        max_height = height
+        min_height = height * 1 // 10
+        mean_value = np.mean(values) * 0.6
+        max_value = np.max(values) - mean_value
         results = []
         stripes_count = (width - 2 * padding) // (Equalizer.STRIPE_WIDTH + Equalizer.STRIPE_SEP)
         time_step = duration / stripes_count
 
         for i in range(stripes_count):
             ind = int(len(values) * (i / stripes_count))
-            curr_height = max(values[ind] * max_height / max_value, min_height)
+            curr_height = max(max_height * (values[ind] - mean_value) / max_value, min_height)
+            print(values[ind])
             results.append(
                 Stripe(
                     canvas=canvas,
